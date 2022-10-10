@@ -1,1 +1,4 @@
 /.venv
+/.debug.py
+/.vscode
+/db.sqlite3
