@@ -6,3 +6,7 @@
 /pyjama_portfolio/migrations
 /static_collected
 /pyjama_portfolio_project/__pycache__
+pyjama_portfolio/__pycache__/urls.cpython-310.pyc
+pyjama_portfolio/__pycache__/views.cpython-310.pyc
+pyjama_portfolio_project/__pycache__/settings.cpython-310.pyc
+pyjama_portfolio_project/__pycache__/urls.cpython-310.pyc
