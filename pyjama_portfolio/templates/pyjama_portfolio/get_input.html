@@ -1,0 +1,16 @@
+{% extends "pyjama_portfolio/layout.html" %}
+{% block title %}
+Enter some input
+{% endblock %}
+{% block content %}
+<form method="POST" action="../display_input/">
+    {% csrf_token %}
+    <input type="text" name="textfield">
+    <br/>
+    enter something rad
+    <br/>
+    <button type="submit">Upload text</button>
+    <br/>
+    You entered: {{ user_input }}
+</form>
+{% endblock %}

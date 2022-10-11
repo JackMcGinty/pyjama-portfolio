@@ -27,6 +27,7 @@
 * [Alphavantage.co Documentation](https://www.alphavantage.co/documentation/)
 * [Alphavantage Python Wrapper](https://github.com/RomelTorres/alpha_vantage)
 * [RealPython](https://realpython.com/python-api/)
+* [StackOverflow, specifically the linked thread](https://stackoverflow.com/questions/25028895/very-simple-user-input-in-django)
 
 # Future Work
 

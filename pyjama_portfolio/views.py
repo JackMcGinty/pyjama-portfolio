@@ -13,3 +13,21 @@ def see_stocks(request):
             "test_var": "donuts are good, bro",
         }
         )
+
+def get_input(request):
+    return render(
+        request,
+        "pyjama_portfolio/get_input.html",
+    )
+
+def display_input(request):
+    get_text = "default variable"
+    if request.method == "POST":
+        get_text = request.POST["textfield"]
+    return render(
+        request,
+        "pyjama_portfolio/get_input.html",
+        {
+            "user_input": get_text
+        }
+    )
