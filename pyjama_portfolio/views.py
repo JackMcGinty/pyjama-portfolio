@@ -1,6 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from alpha_vantage.timeseries import TimeSeries
 
+import pyjama_portfolio
+ts = TimeSeries(key='RC15FSQIX0NWZDZV', output_format='pandas')
+from pprint import pprint # Debug only
 
 # Create your views here.
 def home(request):
@@ -31,3 +35,42 @@ def display_input(request):
             "user_input": get_text
         }
     )
+
+def stock_search(request):
+    stock_symbol = "null"
+    stock_text = "default stock"
+    if request.method == "POST":
+        stock_symbol = request.POST["textfield"]
+    if stock_symbol == "":
+        return render(
+            request,
+            "pyjama_portfolio/see_stocks.html",
+            {
+                "code": "empty",
+                "stock_symbol": stock_symbol,
+                "stock_price": "0"
+            }
+        )
+    try:
+        data, meta_data = ts.get_daily(symbol=stock_symbol, outputsize='full')
+        stock_text = data.iloc[0, 0]
+    except ValueError:
+	        return render(
+                request,
+                "pyjama_portfolio/see_stocks.html",
+                {
+                    "code": "invalid",
+                    "stock_symbol": stock_symbol,
+                    "stock_price": "0"
+                }
+            )
+    return render(
+        request,
+        "pyjama_portfolio/see_stocks.html",
+        {
+            "code": "ok",
+            "stock_symbol": stock_symbol,
+            "stock_price": stock_text
+        }
+    )
+    

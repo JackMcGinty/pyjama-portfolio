@@ -3,5 +3,22 @@
 See them stocks
 {% endblock %}
 {% block content %}
-<p>The python-defined variable is: {{ test_var }}</p>
+<form method="POST" action="../stock_search/">
+    {% csrf_token %}
+    <input type="text" name="textfield">
+    <br/>
+    enter something rad
+    <br/>
+    <button type="submit">Upload text</button>
+    <br/>
+    {% if code == "invalid" %}
+    <p>There doesn't appear to be a stock with the symbol "{{ stock_symbol }}".<br/>
+        Try a different symbol.
+    </p>
+    {% elif code == "empty" %}
+    <p>Enter a stock to get started.</p>
+    {% elif code == "ok" %}
+    <p>Today's opening {{ stock_symbol }} stock price: $ {{ stock_price }}</p>
+    {% endif %}
+</form>
 {% endblock %}
