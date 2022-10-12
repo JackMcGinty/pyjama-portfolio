@@ -9,7 +9,7 @@ See them stocks
     <br/>
     enter something rad
     <br/>
-    <button type="submit">Upload text</button>
+    <button type="submit">Search for Stock</button>
     <br/>
     {% if code == "invalid" %}
     <p>There doesn't appear to be a stock with the symbol "{{ stock_symbol }}".<br/>
@@ -18,7 +18,7 @@ See them stocks
     {% elif code == "empty" %}
     <p>Enter a stock to get started.</p>
     {% elif code == "ok" %}
-    <p>Today's opening {{ stock_symbol }} stock price: $ {{ stock_price }}</p>
+    <p>Most recent (current or yesterday's closing) {{ stock_symbol }} stock price: $ {{ stock_price }}</p>
     {% endif %}
 </form>
 {% endblock %}
