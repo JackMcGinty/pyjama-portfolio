@@ -1,6 +1,7 @@
 /.venv
 /.debug.py
 /.vscode
+/settings.json
 /db.sqlite3
 /pyjama_portfolio/__pycache__
 /pyjama_portfolio/migrations

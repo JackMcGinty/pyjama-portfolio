@@ -3,11 +3,14 @@
 See them stocks
 {% endblock %}
 {% block content %}
+<div id="funds-block">
+    <p>Current Balance: <span id="funds">$ {{ money }}</span></p>
+</div>
 <form method="POST" action="../stock_search/">
     {% csrf_token %}
+    <p><strong>Enter the symbol of a stock you would like to buy</strong><br/>
+        (e.g. "AMD", "UBER", "TSLA")<strong>:</strong></p>
     <input type="text" name="textfield">
-    <br/>
-    enter something rad
     <br/>
     <button type="submit">Search for Stock</button>
     <br/>
@@ -21,4 +24,10 @@ See them stocks
     <p>Most recent (current or yesterday's closing) {{ stock_symbol }} stock price: $ {{ stock_price }}</p>
     {% endif %}
 </form>
+{% if code == "ok" %}
+<form method="POST" action="../buy_stock/">
+    {% csrf_token %}
+    <button type="submit">Purchase</button>
+</form>
+{% endif %}
 {% endblock %}
