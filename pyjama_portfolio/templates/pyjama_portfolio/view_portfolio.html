@@ -1,0 +1,13 @@
+{% extends "pyjama_portfolio/layout.html" %}
+{% block title %}
+Your Portfolio
+{% endblock %}
+{% block content %}
+<h3>Here are your assets:</h3>
+<ul>
+    {% for asset in portfolio %}
+        <li>{{ asset.0 }}, bought on {{ asset.1 }} for {{ asset.2 }}</li>
+    {% endfor %}
+</ul>
+<a href={% url 'stock_search' %}>Buy more stocks</a>
+{% endblock %}

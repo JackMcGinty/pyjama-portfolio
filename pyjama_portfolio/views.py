@@ -91,6 +91,17 @@ def stock_search(request):
 
 def buy_stock(request):
     global global_stock_price, global_stock_symbol
+    if global_stock_symbol == "":
+        return render(
+            request,
+            "pyjama_portfolio/see_stocks.html",
+            {
+                "money": get_funds(),
+                "code": "empty",
+                "stock_symbol": global_stock_symbol,
+                "stock_price": "0"
+            }
+        )
     # Connect to Database
     connection = sqlite3.connect('db.sqlite3')
     cursor = connection.cursor()
@@ -146,11 +157,33 @@ def initiate_funds(starting_balance: float):
     print("initiating funds table")
     connection = sqlite3.connect('db.sqlite3')
     cursor = connection.cursor()
-    # Drop and create the funds table
-    cursor.execute("DROP TABLE IF EXISTS funds")
+    # Drop and create the funds table.
+    # Note: the drop here is for Debugging only!
+    cursor.execute("DROP TABLE IF EXISTS funds") # Remove after release
     cursor.execute("CREATE TABLE IF NOT EXISTS funds (balance REAL)")
     cursor.execute("INSERT INTO funds VALUES (?)", (starting_balance,))
     connection.commit()
     connection.close()
 
 initiate_funds(50.00)
+
+def view_portfolio(request):
+    portfolio = query_portfolio()
+    return render(
+        request,
+        "pyjama_portfolio/view_portfolio.html",
+        {
+            "portfolio": portfolio,
+            "stock_symbol": portfolio
+        }
+    )
+
+def query_portfolio() -> list:
+    connection = sqlite3.connect('db.sqlite3')
+    cursor = connection.cursor()
+    # Obtain the data
+    cursor.execute("SELECT * FROM stocks")
+    results = cursor.fetchall()
+    if len(results) == 0:
+        return []
+    return results
