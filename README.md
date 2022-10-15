@@ -28,6 +28,7 @@
 * [Alphavantage Python Wrapper](https://github.com/RomelTorres/alpha_vantage)
 * [RealPython](https://realpython.com/python-api/)
 * [StackOverflow, specifically the linked thread](https://stackoverflow.com/questions/25028895/very-simple-user-input-in-django)
+* [Django forums, specifically the linked thread](https://forum.djangoproject.com/t/read-which-button-in-a-loop-was-clicked/648/5)
 
 # Future Work
 

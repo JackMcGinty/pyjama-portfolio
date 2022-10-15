@@ -1,8 +1,10 @@
+from multiprocessing.sharedctypes import Value
 from django.shortcuts import render
 from django.http import HttpResponse
 from alpha_vantage.timeseries import TimeSeries
-from datetime import date
+from datetime import datetime, date
 import sqlite3
+from pytz import timezone
 ts = TimeSeries(key='RC15FSQIX0NWZDZV', output_format='pandas')
 
 # So we don't have to constantly run API queries
@@ -14,7 +16,10 @@ global_stock_symbol = ""
 
 # Create your views here.
 def home(request):
-    return HttpResponse("Hello, future millionare!")
+    return render(
+        request,
+        "pyjama_portfolio/homepage.html",
+    )
 
 
 def see_stocks(request):
@@ -106,11 +111,16 @@ def buy_stock(request):
     connection = sqlite3.connect('db.sqlite3')
     cursor = connection.cursor()
     # Create the stocks table (assuming we haven't already)
-    cursor.execute("CREATE TABLE IF NOT EXISTS stocks (symbol TEXT, purchased_date DATE, bought_price REAL)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS stocks (symbol TEXT, purchased_date DATE, bought_price REAL, secondary_id INTEGER)")
     # Insert the data
     try:
-        values = (global_stock_symbol, date.today(), global_stock_price)
-        cursor.execute("INSERT INTO stocks VALUES (?,?,?)", values)
+        values = (
+            global_stock_symbol,
+            date.fromtimestamp(datetime.now(timezone('US/Mountain')).timestamp()), 
+            global_stock_price,
+            len(query_portfolio())
+        )
+        cursor.execute("INSERT INTO stocks VALUES (?,?,?,?)", values)
         connection.commit()
         print("Successfully bought a share")
     except ValueError:
@@ -132,8 +142,8 @@ def get_funds():
     connection = sqlite3.connect('db.sqlite3')
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM funds")
-    # Refactor here
     funds = 0.0
+    # Refactor here
     results = cursor.fetchall()
     if len(results) == 0:
         print("there's nothing here!!!")
@@ -165,6 +175,7 @@ def initiate_funds(starting_balance: float):
     connection.commit()
     connection.close()
 
+# Starting balance:
 initiate_funds(50.00)
 
 def view_portfolio(request):
@@ -173,8 +184,9 @@ def view_portfolio(request):
         request,
         "pyjama_portfolio/view_portfolio.html",
         {
+            "money": get_funds(),
             "portfolio": portfolio,
-            "stock_symbol": portfolio
+            "stock_symbol": portfolio,
         }
     )
 
@@ -184,6 +196,59 @@ def query_portfolio() -> list:
     # Obtain the data
     cursor.execute("SELECT * FROM stocks")
     results = cursor.fetchall()
+    connection.close()
     if len(results) == 0:
         return []
     return results
+
+def sell_stock(request):
+    which_stock = 0
+    stock_price = 0.0
+    if request.method == "POST":
+        which_stock = request.POST["stock_id"]
+    # Obtain the stock information
+    connection = sqlite3.connect('db.sqlite3')
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT * FROM stocks WHERE secondary_id = ?", (which_stock,))
+    result = cursor.fetchall() # should only return one
+    # Query AlphaVantage for current price
+    try:
+        data, meta_data = ts.get_daily(symbol=result[0][0], outputsize='full')
+        stock_price = data.iloc[0, 3]
+    except ValueError:
+        print("Something went wrong")
+        portfolio = query_portfolio()
+        connection.close()
+        return render(
+            request,
+            "pyjama_portfolio/view_portfolio.html",
+            {
+                "money": get_funds(),
+                "portfolio": portfolio,
+                "stock_symbol": portfolio,
+            }
+        )
+    update_funds(+stock_price)
+    cursor.execute(f"DELETE FROM stocks WHERE secondary_id = {which_stock}")
+    connection.commit()
+    connection.close()
+    portfolio = query_portfolio()
+    return render(
+        request,
+        "pyjama_portfolio/view_portfolio.html",
+        {
+            "money": get_funds(),
+            "portfolio": portfolio,
+            "stock_symbol": portfolio,
+        }
+    )
+
+# CAUTION!!!!!!
+#   This function is to be used in debugging ONLY!
+#   Do not allow access from the general public!!!!
+def wipe_stocks():
+    connection = sqlite3.connect('db.sqlite3')
+    cursor = connection.cursor()
+    cursor.execute("DROP TABLE IF EXISTS stocks")
+    connection.commit()
+    connection.close()

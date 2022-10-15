@@ -3,10 +3,18 @@
 Your Portfolio
 {% endblock %}
 {% block content %}
+<div id="funds-block">
+    <p>Current Balance: <span id="funds">$ {{ money }}</span></p>
+</div>
 <h3>Here are your assets:</h3>
 <ul>
     {% for asset in portfolio %}
-        <li>{{ asset.0 }}, bought on {{ asset.1 }} for {{ asset.2 }}</li>
+        <li>{{ asset.0 }}, bought on {{ asset.1 }} for $ {{ asset.2 }}</li>
+        <form method="POST" action="../sell_stock/">
+            {% csrf_token %}
+            <input type="hidden" name="stock_id" value="{{ asset.3 }}">
+            <button type="submit">Sell</button>
+        </form>
     {% endfor %}
 </ul>
 <a href={% url 'stock_search' %}>Buy more stocks</a>

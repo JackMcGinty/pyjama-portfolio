@@ -1,3 +1,13 @@
 .body-content {
     color: black;
 }
+
+.navbar {
+    background-color: black;
+    color: white;
+}
+
+.homepage-content {
+    margin: 20em;
+    
+}
