@@ -15,6 +15,7 @@ global_stock_symbol = ""
 
 
 # Create your views here.
+
 def home(request):
     return render(
         request,
@@ -24,11 +25,14 @@ def home(request):
 
 def see_stocks(request):
     return render(
-        request, 
-        "pyjama_portfolio/see_stocks.html",
-        {
-            "test_var": "donuts are good, bro",
-        }
+            request,
+            "pyjama_portfolio/see_stocks.html",
+            {
+                "money": get_funds(),
+                "code": "empty",
+                "stock_symbol": "",
+                "stock_price": "0"
+            }
         )
 
 def get_input(request):
@@ -54,6 +58,7 @@ def stock_search(request):
     global global_stock_price, global_stock_symbol
     stock_symbol = ""
     stock_text = "default stock"
+    # Get the stock symbol the user entered
     if request.method == "POST":
         stock_symbol = request.POST["textfield"].upper()
     if stock_symbol == "":
@@ -167,9 +172,6 @@ def initiate_funds(starting_balance: float):
     print("initiating funds table")
     connection = sqlite3.connect('db.sqlite3')
     cursor = connection.cursor()
-    # Drop and create the funds table.
-    # Note: the drop here is for Debugging only!
-    cursor.execute("DROP TABLE IF EXISTS funds") # Remove after release
     cursor.execute("CREATE TABLE IF NOT EXISTS funds (balance REAL)")
     cursor.execute("INSERT INTO funds VALUES (?)", (starting_balance,))
     connection.commit()
@@ -177,6 +179,7 @@ def initiate_funds(starting_balance: float):
 
 # Starting balance:
 initiate_funds(50.00)
+# This line should be removed for actual use.
 
 def view_portfolio(request):
     portfolio = query_portfolio()
