@@ -1,6 +1,6 @@
 # PyjamaPortfolio
 ![a snake trading stocks](./snake-stocks2-big.jpeg)  
-(Craiyon.com, prompt = "a snake trading stocks professional high quality")
+([craiyon.com](https://craiyon.com), prompt = "a snake trading stocks professional high quality")
 
 
 ## Overview
